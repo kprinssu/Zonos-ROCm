@@ -89,10 +89,11 @@ pip uninstall triton
 rm -rf ~/.triton
 rm -rf ./triton/python/build
 
-git clone https://github.com/triton-lang/triton
-cd triton
-pip install --verbose --no-build-isolation ./python
-cd ..
+#git clone https://github.com/triton-lang/triton
+#cd triton
+#pip install --verbose --no-build-isolation ./python
+#cd .. 
+pip install triton==3.2.0
 
 pip show triton
 
