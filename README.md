@@ -18,7 +18,7 @@ sudo apt install espeak-ng # For Ubuntu
 
 ```bash
 git clone https://github.com/YellowRoseCx/Zonos-ROCm
-git clone https://github.com/YellowRoseCx/flash-attention-triton
+git clone https://github.com/ROCm/flash-attention -b main_perf --depth 1
 git clone https://github.com/state-spaces/mamba
 git clone https://github.com/Dao-AILab/causal-conv1d
 
