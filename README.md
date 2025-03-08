@@ -56,16 +56,12 @@ Zonos follows a straightforward architecture: text normalization and phonemizati
 	# May need to add --no-32 (Only use this option if you're getting errors and know what you're doing)
 	```
 - **GPU:** 6GB+ VRAM, Hybrid-model requires a RDNA2-series (RX 6000+) or newer AMD GPU
-
-#### System dependencies
-
-Zonos depends on the eSpeak library phonemization. You can install it on Ubuntu with the following command:
-
+- Zonos depends on the eSpeak library phonemization. You can install it on Ubuntu with the following command:
 ```bash
 sudo apt install espeak-ng # For Ubuntu
 ```
 
-##### Installing using pip
+#### Installing with FlashAttention2 and Mamba for AMD using pip
 
 ```bash
 git clone https://github.com/YellowRoseCx/Zonos-ROCm
@@ -89,12 +85,7 @@ pip uninstall triton
 rm -rf ~/.triton
 rm -rf ./triton/python/build
 
-#git clone https://github.com/triton-lang/triton
-#cd triton
-#pip install --verbose --no-build-isolation ./python
-#cd .. 
 pip install triton==3.2.0
-
 pip show triton
 
 export FLASH_ATTENTION_TRITON_AMD_ENABLE="TRUE"
@@ -105,13 +96,46 @@ pip install -e .
 pip install --no-build-isolation -e .[compile] # optional but needed to run the hybrid
 ```
 
-##### Confirm that it's working
+####  Increase Performance: Tuning On AMD
 
-For convenience we provide a minimal example to check that the installation works:
+Considerable performance gains can be had through setting a few environment variables and letting ROCm(MIOpen) and Triton tune for the fastest GEMM kernels.
+MIOpen Tuning documentation: [Using MIOPEN_FIND_ENFORCE](https://rocm.docs.amd.com/projects/MIOpen/en/latest/conceptual/perfdb.html#using-miopen-find-enforce) and Using [https://rocm.docs.amd.com/projects/MIOpen/en/latest/how-to/find-and-immediate.html#find-modes](https://rocm.docs.amd.com/projects/MIOpen/en/latest/how-to/find-and-immediate.html#find-modes) environment variables.
+PyTorch TunableOP documentation: [TunableOP](https://github.com/pytorch/pytorch/blob/main/aten/src/ATen/cuda/tunable/README.md)
 
+AMD GPU users not on an RX 7000 series or higher will want to export these 2 variables:
+```bash
+export PYTORCH_TUNABLEOP_HIPBLASLT_ENABLED=0 
+export TORCH_BLAS_PREFER_HIPBLASLT=0 
 ```
-python sample.py
+#### Setting up for the first few runs
+``export FLASH_ATTENTION_TRITON_AMD_AUTOTUNE=1`` Enable Triton autotune
+``export PYTORCH_TUNABLEOP_VERBOSE=1`` Enables Verbosity
+``export PYTORCH_TUNABLEOP_TUNING=1`` `` Enables Actual Tuning with PyTorch
+``export PYTORCH_TUNABLEOP_ENABLED=1`` Enable use of Tuned Results with PyTorch
+``export MIOPEN_FIND_ENFORCE=3`` Perform auto-tune. If PerfDb already contains optimized values, auto-tune is not performed.
+``export MIOPEN_FIND_MODE=1`` This is the full find mode call, which benchmarks all the solvers.
+``export PYTORCH_TUNABLEOP_FILENAME=~/tunableop-config.csv`` Typically, you would leave this variable unset, but we can use it here in order to separate results from various tuning runs. 
+
+After setting those variables, start up Zonos ``python gradio_interface.py`` and then run through a few generations, it will take a long time(possible hours) as it finds the best solutions to the math involved in the model generation. After doing this a few times, you can CTRL+C out of the program which then saves your results.
+
+Afterwards, set these new environment variable values which turn off tuning and sets MIOpen kernel search mode to Fast:
+
+```bash
+export PYTORCH_TUNABLEOP_TUNING=0
+export MIOPEN_FIND_ENFORCE=1
+export MIOPEN_FIND_MODE=2
 ```
+Now when you rerun Zonos, it should be much quicker.
+
+#### Attention if using Hybrid model:
+If using the hybrid model, you will want to comment out the following line in ``gradio_interface.py`` around line 217:
+```
+    if "transformer" in ZonosBackbone.supported_architectures:
+        supported_models.append("Zyphra/Zonos-v0.1-transformer")
+```
+
+
+``FLASH_ATTENTION_TRITON_AMD_ENABLE="TRUE" FLASH_ATTENTION_TRITON_AMD_REF=1`` may be useful in the future
 
 ## Usage
 
@@ -127,7 +151,7 @@ export PYTORCH_TUNABLEOP_TUNING=1
 export PYTORCH_TUNABLEOP_ENABLED=1
 export PYTORCH_TUNABLEOP_FILENAME=~/tunableop-config-mamba.csv 
 
-export MIOPEN_FIND_ENFORCE=3 
+export MIOPEN_FIND_ENFORCE=1
 export MIOPEN_FIND_MODE=5 
 
 python gradio_interface.py
