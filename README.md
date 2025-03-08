@@ -14,7 +14,7 @@
 sudo apt install espeak-ng # For Ubuntu
 ```
 
-#### Installing with FlashAttention2 and Mamba for AMD using pip
+### Installing with FlashAttention2 and Mamba for AMD using pip
 
 ```bash
 git clone https://github.com/YellowRoseCx/Zonos-ROCm
@@ -49,7 +49,7 @@ pip install -e .
 pip install --no-build-isolation -e .[compile] # optional but needed to run the hybrid
 ```
 
-####  Increase Performance: Tuning On AMD
+###  Increase Performance: Tuning On AMD
 
 Considerable performance gains can be had through setting a few environment variables and letting ROCm(MIOpen) and Triton tune for the fastest GEMM kernels.
 MIOpen Tuning documentation: [Using MIOPEN_FIND_ENFORCE](https://rocm.docs.amd.com/projects/MIOpen/en/latest/conceptual/perfdb.html#using-miopen-find-enforce) and Using [https://rocm.docs.amd.com/projects/MIOpen/en/latest/how-to/find-and-immediate.html#find-modes](https://rocm.docs.amd.com/projects/MIOpen/en/latest/how-to/find-and-immediate.html#find-modes) environment variables.
@@ -60,7 +60,7 @@ AMD GPU users not on an RX 7000 series or higher will want to export these 2 var
 export PYTORCH_TUNABLEOP_HIPBLASLT_ENABLED=0 
 export TORCH_BLAS_PREFER_HIPBLASLT=0 
 ```
-#### Setting up for the first few runs
+### Setting up for the first few runs
 ``export FLASH_ATTENTION_TRITON_AMD_AUTOTUNE=1`` Enable Triton autotune
 ``export PYTORCH_TUNABLEOP_VERBOSE=1`` Enables Verbosity
 ``export PYTORCH_TUNABLEOP_TUNING=1`` `` Enables Actual Tuning with PyTorch
@@ -80,7 +80,7 @@ export MIOPEN_FIND_MODE=2
 ```
 Now when you rerun Zonos, it should be much quicker.
 
-#### Attention if using Hybrid model:
+### Attention if using Hybrid model:
 If using the hybrid model, you will want to comment out the following line in ``gradio_interface.py`` around line 217:
 ```
     if "transformer" in ZonosBackbone.supported_architectures:
