@@ -61,13 +61,13 @@ export PYTORCH_TUNABLEOP_HIPBLASLT_ENABLED=0
 export TORCH_BLAS_PREFER_HIPBLASLT=0 
 ```
 ### Setting up for the first few runs
-``export FLASH_ATTENTION_TRITON_AMD_AUTOTUNE=1`` Enable Triton autotune
-``export PYTORCH_TUNABLEOP_VERBOSE=1`` Enables Verbosity
-``export PYTORCH_TUNABLEOP_TUNING=1`` `` Enables Actual Tuning with PyTorch
-``export PYTORCH_TUNABLEOP_ENABLED=1`` Enable use of Tuned Results with PyTorch
-``export MIOPEN_FIND_ENFORCE=3`` Perform auto-tune. If PerfDb already contains optimized values, auto-tune is not performed.
-``export MIOPEN_FIND_MODE=1`` This is the full find mode call, which benchmarks all the solvers.
-``export PYTORCH_TUNABLEOP_FILENAME=~/tunableop-config.csv`` Typically, you would leave this variable unset, but we can use it here in order to separate results from various tuning runs. 
+``export FLASH_ATTENTION_TRITON_AMD_AUTOTUNE=1`` Enable Triton autotune      
+``export PYTORCH_TUNABLEOP_VERBOSE=1`` Enables Verbosity          
+``export PYTORCH_TUNABLEOP_TUNING=1`` Enables Actual Tuning with PyTorch            
+``export PYTORCH_TUNABLEOP_ENABLED=1`` Enable use of Tuned Results with PyTorch             
+``export MIOPEN_FIND_ENFORCE=3`` Perform auto-tune. If PerfDb already contains optimized values, auto-tune is not performed.                
+``export MIOPEN_FIND_MODE=1`` This is the full find mode call, which benchmarks all the solvers.             
+``export PYTORCH_TUNABLEOP_FILENAME=~/tunableop-config.csv`` Typically, you would leave this variable unset, but we can use it here in order to separate results from various tuning runs.              
 
 After setting those variables, start up Zonos ``python gradio_interface.py`` and then run through a few generations, it will take a long time(possible hours) as it finds the best solutions to the math involved in the model generation. After doing this a few times, you can CTRL+C out of the program which then saves your results.
 
