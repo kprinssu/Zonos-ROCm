@@ -14,4 +14,4 @@ soundfile>=0.13.1
 huggingface-hub>=0.28.1
 gradio>=5.15.0
 
---find-links https://repo.radeon.com/rocm/manylinux/rocm-rel-6.4.2/
+--extra-index-url https://download.pytorch.org/whl/nightly/rocm6.4
