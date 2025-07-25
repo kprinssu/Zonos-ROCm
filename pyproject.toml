@@ -10,7 +10,7 @@ dependencies = [
     "packaging",
     "inflect>=7.5.0",
     "kanjize>=1.5.0",
-    "numpy>=2.2.2",
+    "numpy==1.26.4",
     "phonemizer>=3.3.0",
     "sudachidict-full>=20241021",
     "sudachipy>=0.6.10",
