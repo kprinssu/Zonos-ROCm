@@ -1,0 +1,25 @@
+FROM rocm/pytorch:rocm6.4.1_ubuntu24.04_py3.12_pytorch_release_2.6.0
+
+
+WORKDIR /app
+
+ENV CAUSAL_CONV1D_SKIP_CUDA_BUILD=TRUE\
+ MAMBA_SKIP_CUDA_BUILD=TRUE \
+ FLASH_ATTENTION_TRITON_AMD_ENABLE=TRUE \
+ FLASH_ATTENTION_SKIP_CUDA_BUILD=TRUE
+
+RUN  git clone https://github.com/kprinssu/Zonos-ROCm
+
+RUN  git clone https://github.com/ROCm/flash-attention -b main_perf --depth 1 \
+  && git clone https://github.com/state-spaces/mamba \
+  && git clone https://github.com/Dao-AILab/causal-conv1d
+
+
+RUN cd Zonos-ROCm && pip install -r requirements-rocm.txt
+RUN cd causal-conv1d &&  pip install .
+RUN cd mamba && pip install . --no-build-isolation
+RUN cd flash-attention && python setup.py install
+
+RUN cd Zonos-ROCm && pip install -e .
+
+CMD ["python", "/app/Zonos-ROCm/gradio_interface.py"]
